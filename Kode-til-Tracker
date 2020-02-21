@@ -1,0 +1,133 @@
+import numpy as np
+from matplotlib import pyplot as plt
+
+### Funktioner ###
+
+def convertdata(data):
+
+    irow = 0
+
+    for row in data:
+
+        icol = 0
+
+        for i in row:
+            i = i.replace('E', '*10**')
+            i = i.replace(',', '.')
+            i = eval(i)
+
+            data[irow][icol] = i
+
+            icol += 1
+
+        irow += 1
+
+    data = data.astype(float)
+
+    return(data)
+
+def intervals(data):
+
+    intervals = []
+
+    for i in range(len(data)):
+        if i == len(data) - 1:
+            break
+        else: 
+            x = data[i+1] - data[i]
+            intervals.append(x)
+
+    intervals = np.array(intervals)
+
+    return intervals
+
+def avg_interv(data):
+
+    avg_interv = []
+
+    for i in range(len(data)):
+        if i == len(data) - 1:
+            break 
+        else: 
+            x = (data[i+1] + data[i]) / 2
+            avg_interv.append(x)
+
+    avg_interv = np.array(avg_interv)
+
+    return avg_interv
+
+##############################################################################
+
+### Læs data ###
+
+data = np.loadtxt('Falcon.txt', dtype=str, skiprows=2)
+
+data = convertdata(data)
+
+### Plot position per tid ###
+
+t = data[:,0]
+pos = data[:,1]
+
+fit_pos = np.polyfit(t, pos, 2)
+
+x = np.linspace(0,t[-1],100)
+y = fit_pos[0]*x**2 + fit_pos[1]*x + fit_pos[2]
+
+label1 = f"y = {round(fit_pos[0],2)}$x^2$ + {round(fit_pos[1],2)}x + {round(fit_pos[2],2)}"
+
+plt.plot(x, y, color = 'r', label = label1)
+plt.plot(t, pos, 'o', color = 'b')
+
+plt.xlabel('Tid [s]')
+plt.ylabel('Position [m]')
+plt.title('Position per tid')
+
+plt.legend()
+plt.show()
+
+### Plot hastighed per tid ###
+
+int_t = intervals(t)
+int_pos = intervals(pos)
+
+v = int_pos/int_t
+tv = avg_interv(t)
+
+x = np.linspace(0,tv[-1],100)
+y = 2*fit_pos[0]*x + fit_pos[1]
+
+label2 = f"y = {round(2*fit_pos[0],2)}x + {round(fit_pos[1],2)}"
+
+plt.plot(x, y, color = 'r', label = label2)
+plt.plot(tv, v, 'o', color = 'b')
+
+plt.xlabel('Tid [s]')
+plt.ylabel('Hastighed [m/s]')
+plt.title('Hastighed per tid')
+
+plt.legend()
+plt.show()
+
+### Plot acceleration per tid ###
+
+int_tv = intervals(tv)
+int_v = intervals(v)
+
+a = int_v/int_tv
+ta = avg_interv(tv)
+
+x = np.linspace(0,ta[-1],100)
+y = np.repeat(2*fit_pos[0],100)
+
+label3 = f"y = {round(2*fit_pos[0],2)}"
+
+plt.plot(x, y, color='r', label = label3)
+plt.plot(ta, a, 'o')
+
+plt.xlabel('Tid [s]')
+plt.ylabel('Acceleration (m/$s^2$)')
+plt.title('Acceleration per tid')
+
+plt.legend()
+plt.show()
