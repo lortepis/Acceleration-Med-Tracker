@@ -1,23 +1,4 @@
-import numpy as np
-from matplotlib import pyplot as plt
-
-### Funktioner ###
-
-def convertdata(data):
-
-    irow = 0
-
-    for row in data:
-
-        icol = 0
-
-        for i in row:
-            i = i.replace('E', '*10**')
-            i = i.replace(',', '.')
-            i = eval(i)
-
-            data[irow][icol] = i
-
+flkknlkfleknflkefnlkfe
             icol += 1
 
         irow += 1
