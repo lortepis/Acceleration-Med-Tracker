@@ -1,11 +1,4 @@
-import numpy as np
-from matplotlib import pyplot as plt
-
-### Funktioner ###
-
-def convertdata(data):
-
-    irow = 0
+LORT HER TAK
 
     for row in data:
 
